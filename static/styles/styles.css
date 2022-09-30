@@ -1,9 +1,13 @@
 .bg {
-    background-color: lime;
+    background-color: rgb(164, 181, 164);
 }
 
 *, a {
     color: #fff;
+}
+
+h1,p {
+    color: #000;
 }
 
 .login-container {
