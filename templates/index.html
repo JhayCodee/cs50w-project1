@@ -4,10 +4,56 @@
 
 {% block content %}
 
-    <h1 class="text-center">Libro 1</h1>
+    <h1 class="text-center my-3">Libros</h1>
 
-    <p>ISBN: {{book.isbn}}</p>
-    <p>title: {{book.title}}</p>
+    <div class="container">
 
+        <!-- Buscador -->
+
+        <form class="input-group mb-3" action="/" method="post">
+
+            <input type="text" class="form-control" placeholder="Busqueda por: isbn, titulo o autor" aria-label="Search" aria-describedby="button-addon2" name="search">
+
+            <button class="btn btn-outline-secondary" type="submit" >Buscar</button>
+
+        </form>
+
+    </div>
+
+    <div class="container">
+
+        <div class="row">
+
+            {% for t in books %}
+
+                <div class="col-4">
+                    
+                    <div class="card text-bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card-header">
+                            <h5 class="card-title"> {{t.title}} </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">{{t.isbn}}</p>
+                            <p class="card-text">{{t.author}}</p>
+                            <p class="card-text">{{t.year}}</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <div class="container">
+        <a href="{{ url_for('logout') }}" class="btn btn-dark my-5">logout</a>
+        {%if f%}
+            <p>mamahuevo</p>
+        {%endif%}
+    </div>
 
 {% endblock %}
+
