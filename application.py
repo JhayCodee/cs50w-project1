@@ -81,11 +81,24 @@ def book(book_isbn):
                 user_review = db.execute("SELECT * FROM reviews WHERE book_id = :book_id AND user_id = :user_id",
                 {"book_id": book.id, "user_id": session['user_id']}).fetchone()
                 
+                try:
+                    img = response["items"][0]["volumeInfo"]["imageLinks"]["thumbnail"]
+                    description = response["items"][0]["volumeInfo"]["description"]
+                    average_rating = response["items"][0]["volumeInfo"]["averageRating"]
+                    ratingsCount = response["items"][0]["volumeInfo"]["ratingsCount"]
+                except:
+                    img = "https://p16-sign-va.tiktokcdn.com/tos-maliva-avt-0068/5f6a7e32906eb1d5f22a4508cfdc7509~c5_720x720.jpeg?x-expires=1665284400&x-signature=FpnuaQ%2F8BQzYMVDLvr3RlvsAUZ0%3D"
+                    description = "No hay"
+                    average_rating = "No hay"
+                    ratingsCount = "No hay"
+
                 # context donde almacenamos los datos del libro, de la base de datos y de la api
                 context = {
                     "book": book,
-                    "img" : response["items"][0]["volumeInfo"]["imageLinks"]["thumbnail"],
-                    "description": response["items"][0]["volumeInfo"]["description"],
+                    "img" : img,
+                    "description": description,
+                    "average_rating": average_rating,
+                    "ratingsCount": ratingsCount,
                     "isReview": True, #flag para las reviews de los usuarios
                     "form": False   #flag para el formulario de reviews
                 }
@@ -160,7 +173,7 @@ def api(book_isbn):
         book = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": book_isbn}).fetchone()
 
         if book is None:
-            return "404"
+            return render_template("404.html") ,404
         
         review_count = db.execute("SELECT COUNT(*) FROM reviews WHERE book_id = :book_id", {"book_id": book.id}).fetchone()[0]
         average_score = db.execute("SELECT AVG(rating) FROM reviews WHERE book_id = :book_id", {"book_id": book.id}).fetchone()[0]
@@ -225,16 +238,11 @@ def register():
         # verifica que los campos no esten vacios
         if not username or not password or not cpassword:
             print("falta informacion")
-            return render_template("register.html")
+            return redirect(url_for("register"))
         
         else:
-
             # verifica que las contraseñas coincidan
-            if password != cpassword:
-                print("no coinciden")
-                render_template("register.html")
-            else:
-
+            if password == cpassword:
                 # verifica que el usuario no exista
                 if db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).rowcount == 0:
                 
@@ -248,15 +256,16 @@ def register():
                     # guarda el id del usuario en la sesion
                     user = db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).fetchone()
                     session["user_id"] = user.id
-
-                    redirect(url_for("index"))
-
+                    print("usuario registrado")
+                    
+                    return redirect("/")
                 else:
                     print("usuario ya existe")
-                    render_template("register.html")
+                    return redirect(url_for("register"))
 
-            return render_template ("register.html") 
-            
+            else:
+                print("no coinciden las contras")
+                return redirect(url_for("register"))            
     else:
         return render_template("register.html")
 

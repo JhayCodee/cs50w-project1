@@ -1,16 +1,17 @@
 {% extends 'layout.html' %}
 
-{% block title %} Registerq {% endblock %}
+{% block title %} Register {% endblock %}
 
 {% block content %}
 
-<div class="login-container">
-  <div class="container w-75 bg-primary mt-5 shadow rounded">
+<div class="login-container bg-gris">
+  <div class="container w-75 bg shadow rounded">
     <div class="row align-items-stretch">
   
-      <div class="col bg d-none d-lg-block col-md-5 col-lg-5 col-xl-6">
-          <!-- imagen -->
-      </div>
+      <div class="col d-none d-lg-block col-md-5 col-lg-5 col-xl-6 img-lib p-0">
+        <!-- imagen -->
+        <img src="../static/img/log.jpg" alt="biblioteca" loading="lazy">
+    </div>
   
       <div class="col">
           <div class="text-end">
@@ -35,10 +36,10 @@
                 <input name="cf-password" type="password" class="form-control" id="cf-password">
             </div>
             <div class="d-grid">
-              <button type="submit" class="btn btn-light">Regístrate</button>
+              <button type="submit" class="btn btn-primary">Regístrate</button>
             </div>
             <div class="my-3 text-center">
-              <span> Ya tienes cuenta? <a href="#"> Inicia sesión </a> </span>
+              <span> Ya tienes cuenta? <a href="{{ url_for('login') }}"> Inicia sesión </a> </span>
             </div>  
           </form>
       </div>

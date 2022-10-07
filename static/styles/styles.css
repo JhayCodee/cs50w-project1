@@ -2,6 +2,10 @@
   background-color: #bfd8ff;
 }
 
+.bg-gris {
+  background-color: #ebf1ff;
+}
+
 .linea {
   border-bottom: 1px dashed black;
 }
@@ -15,7 +19,7 @@ h1, p {
 }
 
 .login-container {
-  height: 80vh;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;

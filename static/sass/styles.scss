@@ -1,9 +1,13 @@
 $celeste: #bfd8ff;
-
-
+$azul: #007dfe; 
+$gris: #ebf1ff;
 
 .bg {
     background-color: $celeste;
+}
+
+.bg-gris {
+    background-color: $gris;
 }
 
 .linea {
@@ -19,7 +23,7 @@ h1,p {
 }
 
 .login-container {
-    height: 80vh;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
