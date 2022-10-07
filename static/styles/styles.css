@@ -1,18 +1,34 @@
 .bg {
-    background-color: rgb(164, 181, 164);
+  background-color: #bfd8ff;
+}
+
+.linea {
+  border-bottom: 1px dashed black;
 }
 
 *, a {
-    color: #000;
+  color: #000;
 }
 
-h1,p {
-    color: #000;
+h1, p {
+  color: #000;
 }
 
 .login-container {
-    height: 80vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
+.img-lib {
+  overflow: hidden;
+}
+.img-lib img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+
+/*# sourceMappingURL=styles.css.map */

@@ -5,19 +5,20 @@
 {% block content %}
 
 <div class="login-container">
-  <div class="container w-75 bg-primary mt-5 shadow rounded">
+  <div class="container w-75 bg mt-5 shadow rounded">
     <div class="row align-items-stretch">
   
-      <div class="col bg d-none d-lg-block col-md-5 col-lg-5 col-xl-6">
+      <div class="col d-none d-lg-block col-md-5 col-lg-5 col-xl-6 img-lib p-0">
           <!-- imagen -->
+          <img src="../static/img/log.jpg" alt="biblioteca" loading="lazy">
       </div>
   
-      <div class="col">
+      <div class="col py-5 px-5">
           <div class="text-end">
             <!-- logo aqui -->
           </div>
-          <h2 class="fw-bold text-center py-5">
-            Bienvenido
+          <h2 class="fw-bold text-center py-3">
+            Inicia Sesión
           </h2>
   
           <!-- login -->
@@ -31,9 +32,12 @@
               <input name="password" type="password" class="form-control" id="password">
             </div>
             <div class="d-grid">
-              <button type="submit" class="btn btn-ligth">Iniciar sesión</button>
+              <button type="submit" class="btn btn-primary">Iniciar sesión</button>
             </div>
-            <div class="my-3 text-center">
+
+            <div class="linea my-4"></div>
+
+            <div class="text-center">
               <span> No tienes cuenta? <a href="#"> Regístrate </a> </span>
             </div>  
           </form>

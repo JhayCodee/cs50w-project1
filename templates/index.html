@@ -4,6 +4,11 @@
 
 {% block content %}
 
+    <header>
+        {% include 'navbar.html' %}
+    </header>
+
+
     <h1 class="text-center my-3">Libros</h1>
 
     <div class="container">
@@ -37,6 +42,7 @@
                             <p class="card-text">{{t.author}}</p>
                             <p class="card-text">{{t.year}}</p>
                         </div>
+                        <a href="/book/{{t.isbn}}" class="btn btn-primary mx-3 my-3">Ir</a>
                     </div>
 
                 </div>
