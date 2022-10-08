@@ -15,22 +15,22 @@ Los usuarios conectados deberían ser capaces de cerrar sesión. (**Se encuentra
 ### - Importar:
 Se le proporciona en este proyecto un archivo llamado books.csv, el cual es una hoja de cálculo en formato CSV de 5000 libros diferentes. Cada uno tiene un número ISBN, un título, un autor, y un año de publicación. En un archivo Python llamado import.py separado de tu aplicación web, escriba un programa que tome los libros y los importe a su base de datos PostgreSQL. Primero necesitarás decidir qué tablas crear, qué columnas esas tablas deberían tener, y cómo se deberían relacionar entre ellas (**se encuentra en import.py**)
 
-####Diagrama de la BD:
+#### Diagrama de la BD:
 [![bd](https://i.postimg.cc/QCBwrr04/p1.png "bd")](http://https://i.postimg.cc/QCBwrr04/p1.png "bd")
 
 ### - Búsqueda: 
 Una vez que el usuario ha iniciado sesión, deberían ser llevados a una página donde puedan buscar un libro. Los usuarios deberían ser capaces de ingresar el número ISBN de el libro, el título de el libro, o el autor de un libro. Luego de realizar la búsqueda, tu sitio web debería mostrar una lista de posibles coincidencias, o alguna clase de mensaje si no hubieron coincidencias. Si el usuario ingresó solamente parte de un título, ISBN, o nombre del autor, ¡tu página de búsqueda debería encontrar coincidencias para esos igualmente! **(Se encuentra en "/" index )**
 
-###- Pagina de Libro 
+### - Pagina de Libro 
 Cuando los usuarios hagan click en un libro entre los resultados de la página de búsqueda, deberían ser llevados a una página de libro, con detalles sobre el libro: su título, autor, año de publicación, número ISBN, y cualquier reseña que los usuarios han dejado para ese libro en tu sitio web.  **(Se encuentra en la ruta /book en application.py )**
 
-###- Envío de Reseña:
+### - Envío de Reseña:
 En la página de libro, los usuarios deberían ser capaces de enviar una reseña: consistiendo en un puntaje en una escala del 1 al 5, al igual que un componente de texto para la reseña donde el usuario pueda escribir su opinión sobre un libro. Los usuarios no deberían ser capaces de enviar múltiples reseñas para el mismo libro.  **(Se encuentra en la ruta /book en application.py )**
 
-###- Información de Reseña de Goodreads (Google Books API): 
+### - Información de Reseña de Goodreads (Google Books API): 
 En la página de libro, también deberías mostrar (si está disponible) el puntaje promedio y cantidad de puntuaciones que el libro ha recibido de Goodreads. **(Se encuentra en la ruta /book en application.py )**
 
-###- Acceso a API: 
+### - Acceso a API: 
 Si los usuarios hacen una solicitud GET a la ruta /api/ de tu sitio web, donde es un número ISBN, tu sitio web debería retornar una respuesta JSON conteniendo el título del libro, autor, fecha de publicación, número ISBN, conteo de reseñas, y puntaje promedio. El JSON resultante debería seguir el siguiente formato:
                         
                 {
