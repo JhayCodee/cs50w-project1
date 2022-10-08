@@ -41,6 +41,10 @@
               <span> No tienes cuenta? <a href="{{ url_for('register') }}"> Regístrate </a> </span>
             </div>  
           </form>
+          
+          {% if message %}
+            <p class="text-center text-danger fs-5 m-auto mt-5 bg-light p-2 fw-bold w-75" >{{message}}</p>
+          {% endif %}
       </div>
     </div>
   </div>  

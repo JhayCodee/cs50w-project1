@@ -16,6 +16,7 @@ if not os.getenv("DATABASE_URL"):
 # Configure session to use filesystem
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
+app.config['JSON_SORT_KEYS'] = False #para que no ordene los diccionarios
 Session(app)
 
 # Set up database
@@ -32,25 +33,27 @@ def index():
 
     if 'user_id' in session: # verifica si el usuario esta logueado
 
+        username = db.execute("SELECT username FROM users WHERE id = :id", {"id": session['user_id']}).fetchone()[0]
+
         if request.method == "POST":
 
-            search = request.form.get("search")
+            search = request.form.get("search").lstrip(' ').rstrip(' ') # elimina espacios en blanco al inicio y al final
 
             if not search:
-                return render_template("index.html", message="mensaje en blanco") 
+                return render_template("index.html", user=username) 
 
             else:
                 # consulta a la base de datos por isbn, titulo o autor ignorando el case sensitive (ilike)
                 books = db.execute("SELECT * FROM books WHERE isbn ILIKE :search OR title ILIKE :search OR author ILIKE :search", 
                 {"search": f"%{search}%"}).fetchall()
                 
-                return render_template("index.html", books=books, f=True)
+                return render_template("index.html", books=books, user=username)
 
         else:
             #isbn='080213825X'
             # response = requests.get("https://www.googleapis.com/books/v1/volumes?q=isbn:"+isbn).json()
             # print(response["items"][0]["volumeInfo"]["imageLinks"]["thumbnail"])
-            return render_template("index.html")
+            return render_template("index.html", user=username)
 
     else:
         return redirect(url_for('login'))
@@ -63,6 +66,8 @@ def book(book_isbn):
     # verifica si el usuario esta logueado
     if 'user_id' in session: 
 
+        username = db.execute("SELECT username FROM users WHERE id = :id", {"id": session['user_id']}).fetchone()[0]
+
         if request.method == "GET":
             
             # busca el libro por isbn en la base de datos
@@ -70,7 +75,7 @@ def book(book_isbn):
 
             # si el libro no existe en la base de datos retorna 404
             if book is None:
-                return "404"
+                return render_template("404.html"), 404
 
             else:
 
@@ -109,14 +114,32 @@ def book(book_isbn):
                 # buscar todas las reviews
                 reviews = db.execute("SELECT * FROM reviews WHERE book_id = :book_id", 
                 {"book_id": book.id}).fetchall()
+                
+                users = db.execute("SELECT id, username FROM users ").fetchall()
 
                 if reviews is None:
                     context["isReview"] = False
                 else:                                                                                                                 
                     context["reviews"] = reviews
-                
+
+                try:
+
+                    if 'message' in request.args:
+                        message = request.args.get('message')
+
+                        if user_review is None:
+                            context["form"] = True
+                        else:
+                            context["form"] = False
+                            context["reviews"] = reviews
+                    else:
+                        message = False
+
+                except:
+                    message = False
+
                
-                return render_template("book.html", **context)
+                return render_template("book.html", **context, user=username, users=users, message=message)
 
         elif request.method == "POST":
 
@@ -126,17 +149,21 @@ def book(book_isbn):
                 cargar reviews si hay
             '''
 
-            review = request.form["review"]
+            review = request.form["review"].lstrip(' ')
             rating = request.form["rating"]
+            
             try:
                 rating = int(rating)
                 print(rating)
             except:
-                return "Rating no valido"
+                print("no es un numero")
+                return redirect(url_for('book', book_isbn=book_isbn)) 
 
 
             if not review or not rating:
-                return "Espacios en blanco"
+                print("espacios en blanco")
+                return redirect(url_for('book', book_isbn=book_isbn)) 
+
             else:
 
                 # busca el libro en la base de datos
@@ -174,17 +201,22 @@ def api(book_isbn):
 
         if book is None:
             return render_template("404.html") ,404
-        
-        review_count = db.execute("SELECT COUNT(*) FROM reviews WHERE book_id = :book_id", {"book_id": book.id}).fetchone()[0]
-        average_score = db.execute("SELECT AVG(rating) FROM reviews WHERE book_id = :book_id", {"book_id": book.id}).fetchone()[0]
-        
+
+        try:
+            review_count = db.execute("SELECT COUNT(*) FROM reviews WHERE book_id = :book_id", {"book_id": book.id}).fetchone()[0]
+            average_score = db.execute("SELECT AVG(rating) FROM reviews WHERE book_id = :book_id", {"book_id": book.id}).fetchone()[0]
+            average_score = round(average_score, 1)
+        except:
+            review_count = 0
+            average_score = 0
+
         book_api = {
             "title": book.title,
             "author": book.author,
             "year": book.year,
             "isbn": book.isbn,
             "review_count": review_count,
-            "average_score": round(average_score, 1)
+            "average_score": average_score
         }
 
         return jsonify(book_api) 
@@ -193,22 +225,23 @@ def api(book_isbn):
 ''' LOGIN '''
 @app.route("/login", methods=["GET", "POST"])
 def login():
-
+    
     if request.method == "POST":
 
-        username = request.form.get("username")
+        username = request.form.get("username").lstrip(' ')
         password = request.form.get("password")
         
         if not username or not password:
             print("campos vacios")
-            return render_template("login.html")
+            return render_template("login.html", message="Porfavor rellene los campos vacios")
         
         else:
 
             if db.execute("SELECT * FROM users WHERE username = :username", 
                         {"username": username}).rowcount == 0:
-                print("usuario no existe")
-                return render_template("login.html")
+
+                return render_template("login.html", message="El usuario no existe")
+
             else:
                 user = db.execute("SELECT * FROM users WHERE username = :username", 
                                 {"username": username}).fetchone()
@@ -217,9 +250,9 @@ def login():
                     session["user_id"] = user.id
                     print("usuario logueado")
                     return redirect(url_for("index"))
+
                 else:
-                    print("contraseña incorrecta")
-                    return render_template("login.html")
+                    return render_template("login.html", message="La contraseña es incorrecta")
     else:
         return render_template("login.html")
 
@@ -231,14 +264,14 @@ def register():
     if request.method == "POST":
 
         # obtiene los datos del formulario
-        username = request.form.get("username")
+        username = request.form.get("username").lstrip(' ')
         password = request.form.get("password")
         cpassword = request.form.get("cf-password")
 
         # verifica que los campos no esten vacios
         if not username or not password or not cpassword:
             print("falta informacion")
-            return redirect(url_for("register"))
+            return render_template("register.html", message="Porfavor rellene los campos vacios")
         
         else:
             # verifica que las contraseñas coincidan
@@ -260,12 +293,11 @@ def register():
                     
                     return redirect("/")
                 else:
-                    print("usuario ya existe")
-                    return redirect(url_for("register"))
+                    return render_template("register.html", message="El nombre de usuario ya está en uso, seleccione otro")
 
             else:
-                print("no coinciden las contras")
-                return redirect(url_for("register"))            
+                return render_template("register.html", message="Las contraseñas no coinciden")
+
     else:
         return render_template("register.html")
 

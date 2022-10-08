@@ -6,6 +6,10 @@
   background-color: #ebf1ff;
 }
 
+.bg-azul {
+  background-color: #007dfe;
+}
+
 .linea {
   border-bottom: 1px dashed black;
 }
@@ -33,6 +37,11 @@ h1, p {
   height: 100%;
   object-fit: cover;
   object-position: 50% 50%;
+}
+
+.padding-hero {
+  padding-top: 10rem;
+  padding-bottom: 10rem;
 }
 
 /*# sourceMappingURL=styles.css.map */

@@ -4,30 +4,33 @@
 
 {% block content %}
 
-    <header>
-        {% include 'navbar.html' %}
+    {% from "_navbar.html" import navbar_user %}
+
+    <header class="bg-primary">
+        {{ navbar_user(user) }}
     </header>
 
-    <div class="contairner shadow m-5">
+    <div class="container shadow bg-light">
 
-        <div class="row mx-3 my-3">
+        <div class="row mx-3 my-3 py-5">
 
-            <div class="col-4">
-                <img class="w-50  rounded my-1 mx-auto d-block" src="{{img}}" alt="imagenlibro">
+            <div class="col-12 col-lg-4 d-flex aligns-items-center justify-content-center my-2">
+                <img class="img-fluid rounded my-1 d-block" src="{{img}}" alt="imagenlibro">
             </div>
 
-            <div class="col-8">
+            <div class="col-12 col-lg-8 my-2">
                 <h1>{{book.title}}</h1>
-                <p>{{book.year}}</p>
+                <p class="my-2 fw-bold">{{book.year}}</p>
                 <p>Autor: {{book.author}}</p>
+                <p>isbn: {{book.isbn}}</p>
                 
                 <div class="h4 pb-2 mb-4 border-bottom border-dark"></div>
 
-                <p>Descripcion:</p>
+                <p class="fw-bold"> Descripción:</p>
                 <p>{{description}}</p>
 
-                <p>Total de puntuaciones: {{ratingsCount}}</p>
-                <p>Puntaje promedio: {{average_rating}}</p>
+                <p>Total de puntuaciones en Goodreads: {{ratingsCount}}</p>
+                <p>Puntaje promedio en Goodreads: {{average_rating}}</p>
 
             </div>
         </div>
@@ -36,27 +39,29 @@
 
     {% if form %}
 
-        <div class="row mx-3 my-3">    
-            <h3>Comentarios</h3>
-            <div class="col">
-                <form action="/book/{{book.isbn}}" method="post">
-                    <div class="form-group">
-                        <label for="exampleFormControlTextarea1">Deja tu comentario</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="review"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleFormControlSelect1">Puntaje</label>
-                        <select class="form-control" id="exampleFormControlSelect1" name="rating">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="my-2 btn btn-primary">Enviar</button>
-                </form>
+        <div class="container shadow bg-light">
+            <div class="row mx-5 my-5 p-3">    
+                <h4>Deja tu reseña</h4>
+                <div class="col">
+                    <form action="/book/{{book.isbn}}" method="post">
+                        <div class="form-group">
+                            <label for="exampleFormControlTextarea1">Deja tu comentario</label>
+                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="review"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleFormControlSelect1">Puntaje</label>
+                            <select class="form-control" id="exampleFormControlSelect1" name="rating">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                            </select>
+                        </div>
+    
+                        <button type="submit" class="my-2 btn btn-primary">Enviar</button>
+                    </form>
+                </div>
             </div>
         </div>
 
@@ -69,13 +74,30 @@
 
         {% for r in reviews %}
 
-            <div class="container shadow">
-                <p>{{r.review}}</p>
+            <div class="container shadow p-2 bg-light my-3">
+
+                <p class="m-1 fw-bold fs-5">Reseña: </p>
+                <p class="m-1">{{r.review}}</p>
+
+                {%for u in users%}
+                    {% if r.user_id == u.id %}
+                
+                        <p class="fw-bold text-primary text-end m-1">Escrita por: {{u.username}}
+                            <br>
+                            calificación: {%for s in range(r.rating)%} &#11088; {%endfor%}</p>
+
+                    {% endif %}
+                {%endfor%}
+
+                <p></p>
             </div>
 
         {% endfor %}
 
     {% endif %}
 
+    {% if message %}
+            <p class="text-danger">{{message}}</p>
+    {% endif %}
 
 {% endblock %}

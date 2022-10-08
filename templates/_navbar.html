@@ -1,13 +1,18 @@
-<nav id="mainNav" class="navbar navbar-light navbar-expand-md navbar-shrink py-3">
+{% macro navbar_user(user) %}
+
+  <nav id="mainNav" class="navbar bg-gris navbar-light navbar-expand-md navbar-shrink py-3">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center" href="/">
-        <span>CSBOOKS</span>
+        <span class="btn btn-dark shadow">CSBOOKS &#128270;</span>
       </a>
                 <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
         <div id="navcol-1" class="collapse navbar-collapse">
             <ul class="navbar-nav mx-auto">
-                <li class="text-center fs-2"> Bienvenido :) </li>
+                <li class=" fs-3 mb-1"> <span class="text-primary fw-bold">{{user}}</span></li>
             </ul><a class="btn btn-dark shadow" role="button" href="{{ url_for('logout') }}">Logout</a>
         </div>
     </div>
   </nav>
+
+{% endmacro %}
+

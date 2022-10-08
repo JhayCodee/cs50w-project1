@@ -4,48 +4,63 @@
 
 {% block content %}
 
-    <header>
-        {% include 'navbar.html' %}
+    {% from "_navbar.html" import navbar_user %}
+
+    <header class="bg">
+        {{ navbar_user(user) }}
+
+        
+        <div class="container position-relative padding-hero">
+            <div class="row justify-content-center">
+                <div class="col-xl-6">
+                    <div class="text-center text-white">
+                        <!-- Page heading-->
+                        <h1 class="mb-5">Buscador de Libros</h1>
+                        <form class="input-group mb-3" action="/" method="post">
+
+                            <input type="text" class="form-control p-3" placeholder="Busqueda por: isbn, titulo o autor" aria-label="Search" aria-describedby="button-addon2" name="search">
+                
+                            <button class="btn btn-primary" type="submit" >Buscar</button>
+                
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </header>
 
+    <div class="container my-3">
 
-    <h1 class="text-center my-3">Libros</h1>
+        {% if books%}
+        <h4 class="my-5 text-center">Resultados</h4>
+        {% endif %}
 
-    <div class="container">
-
-        <!-- Buscador -->
-
-        <form class="input-group mb-3" action="/" method="post">
-
-            <input type="text" class="form-control" placeholder="Busqueda por: isbn, titulo o autor" aria-label="Search" aria-describedby="button-addon2" name="search">
-
-            <button class="btn btn-outline-secondary" type="submit" >Buscar</button>
-
-        </form>
-
-    </div>
-
-    <div class="container">
 
         <div class="row">
 
             {% for t in books %}
 
-                <div class="col-4">
+                <div class="col-sm-12 col-md-6 col-lg-4 m-auto">
                     
-                    <div class="card text-bg-light mb-3" style="max-width: 18rem;">
-                        <div class="card-header">
+                    <div class="card m-auto mb-4" style="max-width: 18rem;">
+                        <div class="card-header bg border-0">
                             <h5 class="card-title"> {{t.title}} </h5>
                         </div>
                         <div class="card-body">
-                            <p class="card-text">{{t.isbn}}</p>
-                            <p class="card-text">{{t.author}}</p>
-                            <p class="card-text">{{t.year}}</p>
+                            <p class="card-text fs-5">isbn: {{t.isbn}}</p>
+                            <p class="card-text fs-5">Autor: {{t.author}}</p>
+                            <p class="card-text fs-5">Lanzamiento: {{t.year}}</p>
+                            <a href="/book/{{t.isbn}}" class="btn btn-primary">Ver libro</a>
                         </div>
-                        <a href="/book/{{t.isbn}}" class="btn btn-primary mx-3 my-3">Ir</a>
                     </div>
 
                 </div>
+
+            {% else %}
+
+                <p class="text-center fs-1">No se encontraron coincidencias</p>
 
             {% endfor %}
 
