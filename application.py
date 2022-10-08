@@ -28,15 +28,18 @@ db = scoped_session(sessionmaker(bind=engine))
 def page_not_found(e):
     return render_template('404.html'), 404
 
+#Ruta principal
 @app.route("/", methods=["GET", "POST"])
 def index():
 
     if 'user_id' in session: # verifica si el usuario esta logueado
 
+        # selecciona el nombre del usuario
         username = db.execute("SELECT username FROM users WHERE id = :id", {"id": session['user_id']}).fetchone()[0]
 
         if request.method == "POST":
 
+            # obtiene la busqueda del usuario
             search = request.form.get("search").lstrip(' ').rstrip(' ') # elimina espacios en blanco al inicio y al final
 
             if not search:
@@ -86,6 +89,7 @@ def book(book_isbn):
                 user_review = db.execute("SELECT * FROM reviews WHERE book_id = :book_id AND user_id = :user_id",
                 {"book_id": book.id, "user_id": session['user_id']}).fetchone()
                 
+                # verifica que todo este bien con la respuesta de la api
                 try:
                     img = response["items"][0]["volumeInfo"]["imageLinks"]["thumbnail"]
                     description = response["items"][0]["volumeInfo"]["description"]
@@ -122,6 +126,7 @@ def book(book_isbn):
                 else:                                                                                                                 
                     context["reviews"] = reviews
 
+                # validaciones locas xD (activa y desactiva form y comentarios)
                 try:
 
                     if 'message' in request.args:
@@ -197,11 +202,14 @@ def api(book_isbn):
 
     if request.method == "GET":
 
+        # busca el libro por isbn en la base de datos
         book = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": book_isbn}).fetchone()
 
+        # si el libro no existe en la base de datos retorna 404
         if book is None:
             return render_template("404.html") ,404
 
+        # verifica si el libro tiene reviews y puntaje
         try:
             review_count = db.execute("SELECT COUNT(*) FROM reviews WHERE book_id = :book_id", {"book_id": book.id}).fetchone()[0]
             average_score = db.execute("SELECT AVG(rating) FROM reviews WHERE book_id = :book_id", {"book_id": book.id}).fetchone()[0]
@@ -210,6 +218,7 @@ def api(book_isbn):
             review_count = 0
             average_score = 0
 
+        # diccionario con los datos del libro para retornar en formato json
         book_api = {
             "title": book.title,
             "author": book.author,
@@ -228,24 +237,28 @@ def login():
     
     if request.method == "POST":
 
+        # obtener los datos del formulario
         username = request.form.get("username").lstrip(' ')
         password = request.form.get("password")
         
+        # verificar que los campos no esten vacios
         if not username or not password:
             print("campos vacios")
             return render_template("login.html", message="Porfavor rellene los campos vacios")
         
         else:
-
+            # buscar el usuario en la base de datos (si existe)
             if db.execute("SELECT * FROM users WHERE username = :username", 
                         {"username": username}).rowcount == 0:
 
                 return render_template("login.html", message="El usuario no existe")
 
             else:
+                # buscar el usuario en la base de datos
                 user = db.execute("SELECT * FROM users WHERE username = :username", 
                                 {"username": username}).fetchone()
 
+                # verificar la contraseña
                 if check_password_hash(user.password, password):
                     session["user_id"] = user.id
                     print("usuario logueado")
